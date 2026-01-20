@@ -10,17 +10,36 @@ use Illuminate\Support\Facades\DB;
 
 class InscripcionsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // obtener todas las inscripciones junto a su evento y fitxer relacionado
-        $inscripcions = Inscripcio::with(['esdeveniment', 'fitxer'])->get();
+        $ordenarPor = $request->get('ordenarPor', '');
+        $direccion = $request->get('direccion', 'asc');
 
-        return view('inscripcions.index', compact('inscripcions'));
+        $esdevenimentNom = $request->get('esdeveniment_nom', '');
+        $data = $request->get('data', ''); 
+
+        $inscripcions = Inscripcio::with('esdeveniment', 'fitxer');
+
+        if ($ordenarPor === 'esdeveniment') {
+            $inscripcions = $inscripcions
+                ->join('esdeveniments', 'inscripcions.id_esdeveniment', '=', 'esdeveniments.id')
+                ->orderBy('esdeveniments.nom', $direccion)
+                ->select('inscripcions.*');
+        } elseif ($ordenarPor === 'nom') {
+            $inscripcions = $inscripcions->orderBy('inscripcions.nom', $direccion);
+        } elseif ($ordenarPor === 'created_at') {
+            $inscripcions = $inscripcions->orderBy('inscripcions.created_at', $direccion);
+        }
+
+        $inscripcions = $inscripcions->get();
+
+        return view('inscripcions.index', compact('inscripcions', 'ordenarPor', 'direccion'))
+            ->with('esdeveniment_nom', $esdevenimentNom)
+            ->with('data', $data);
     }
 
     public function create($id = null)
     {
-        // pasar la lista de esdeveniments para el select
         $esdeveniments = Esdeveniment::all();
 
         return view('inscripcions.create', [
@@ -31,22 +50,17 @@ class InscripcionsController extends Controller
 
     public function store(Request $request)
     {
-        // validar datos de formulario (dni se recoge pero no está en la tabla inscripcions según migración)
         $data = $request->validate([
             'nom' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            // aceptar fichero de imagen para el DNI (requerido en el formulario)
             'dni' => 'required|file|image|max:4096',
             'esdeveniment_id' => 'required|exists:esdeveniments,id',
         ]);
 
-        // asegurar que exista al menos un fitxer para la relación (migración requiere id_fitxer no nulo)
 
-        // usar transacción para que la creación del fitxer e inscripcio sea atómica
         DB::transaction(function () use ($request, $data) {
             $fitxerId = null;
 
-            // si se ha subido un fichero, guardarlo en el disco 'public' y crear registro en fitxers
             if ($request->hasFile('dni')) {
                 $file = $request->file('dni');
                 $originalName = $file->getClientOriginalName();
@@ -60,7 +74,6 @@ class InscripcionsController extends Controller
                 $fitxerId = $fitxer->id;
             }
 
-            // si no se sube fichero, asegurar que exista al menos un fitxer por defecto (migración hace la FK no nula)
             if (! $fitxerId) {
                 $existing = DB::table('fitxers')->first();
                 if ($existing) {
@@ -75,7 +88,6 @@ class InscripcionsController extends Controller
                 }
             }
 
-            // crear la inscripció
             Inscripcio::create([
                 'nom' => $data['nom'],
                 'email' => $data['email'],

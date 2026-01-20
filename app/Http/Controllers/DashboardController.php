@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Mostrar formulario
     public function index()
     {
         return view('auth.login');

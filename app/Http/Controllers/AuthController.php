@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Mostrar formulario
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Login
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -31,7 +29,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // Logout
     public function logout(Request $request)
     {
         Auth::logout();
