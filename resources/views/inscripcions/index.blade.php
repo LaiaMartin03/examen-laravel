@@ -53,9 +53,9 @@
 					<td>{{ $inscripcio->email }}</td>
 					<td>{{ optional($inscripcio->esdeveniment)->nom ?? '—' }}</td>
 					<td>
-						<a href="{{ asset('storage/' . $inscripcio->fitxer->path) }}" target="_blank">{{ $inscripcio->fitxer->nom ?? 'Fitxer' }}</a>
+						<a class="hover:text-purple-500" href="{{ asset('storage/' . $inscripcio->fitxer->path) }}" download="{{ $inscripcio->fitxer->nom ?? 'Fitxer' }}">{{ $inscripcio->fitxer->nom ?? 'Fitxer' }}</a>
 					</td>
-					<td>{{ $inscripcio->created_at->format('d/m/Y H:i') }}</td>
+					<td>{{ $inscripcio->created_at->format('d/m/Y') }}</td>
 				</tr>
 			@endforeach
 		</tbody>
