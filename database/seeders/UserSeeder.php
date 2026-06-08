@@ -14,5 +14,17 @@ class UserSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             ['name' => 'Admin', 'password' => Hash::make('123456')]
         );
+        User::firstOrCreate(
+            ['email' => 'olga@gmail.com'],
+            ['name' => 'Olga', 'password' => Hash::make('123456')]
+        );
+        User::firstOrCreate(
+            ['email' => 'laia@gmail.com'],
+            ['name' => 'Laia', 'password' => Hash::make('123456')]
+        );
+        User::firstOrCreate(
+            ['email' => 'prueba@gmail.com'],
+            ['name' => 'Prueba', 'password' => Hash::make('123456')]
+        );
     }
 }

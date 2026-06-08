@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Bandeja de entrada')
+@section('title', 'Bandeja de salida')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4">
@@ -27,8 +27,8 @@
         <a href="{{ route('messages.create') }}" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Nou missatge</a>
 
         <div>
-            <a href="{{ route('dashboard') }}" class="text-purple-500">Mensajes de entrada</a>
-            <a href="{{ route('messages.index') }}" class="text-gray-500">Mensajes de salida</a>
+            <a href="{{ route('dashboard') }}" class="text-gray-500">Mensajes de entrada</a>
+            <a href="{{ route('messages.index') }}" class="text-purple-500">Mensajes de salida</a>
         </div>
     </header>
         
@@ -36,14 +36,14 @@
         <thead>
             <tr>
                 <th>Data</th>
-                <th>De</th>
+                <th>Per a</th>
                 <th>Assumpte</th>
             </tr>
         </thead>
         <tbody>
             @if ($messages->isEmpty())
                 <tr>
-                    <td colspan="3"><span>No tienes mensajes</span></td>
+                    <td colspan="3">No tienes mensajes</td>
                 </tr>
             @else
                 @foreach($messages as $message)
@@ -52,7 +52,7 @@
                             <a href="{{ route('messages.show', $message) }}">{{ $message->data->format('d/m/Y H:i') }}</a>
                         </td>
                         <td>
-                            <a href="{{ route('messages.show', $message) }}">{{ $message->FromUser->name }}</a>
+                            <a href="{{ route('messages.show', $message) }}">{{ $message->toUser->name }}</a>
                         </td>
                         <td>
                             <a href="{{ route('messages.show', $message) }}">{{ $message->caption }}</a>

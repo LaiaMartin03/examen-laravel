@@ -16,6 +16,5 @@
         <input type="password" name="password" class="border rounded p-2 w-full" required>
     </div>
     <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Entrar</button>
-    <a href="{{ route('dashboard') }}" class="text-purple-500 hover:underline">Tornar a esdeveniments</a>
 </form>
 @endsection
